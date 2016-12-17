@@ -210,7 +210,7 @@ sub _getCapabilities {
 				$args = $1;
 			}
 		} else {
-			if ($can =~ /OTUDB/) {
+			if ($can =~ /OTUDBA/) {
 				$log->error("Capabilities for $profile: missing arguments for '$can'");
 			}
 			$args = 'noArgs';
@@ -346,7 +346,8 @@ sub getConvertCommand2 {
 	# Check if we need to downsample
 	my $samplerateLimit = $song ? Slim::Player::CapabilitiesHelper::samplerateLimit($song) : 0;
 	push @$need, 'D' if $samplerateLimit && !grep /D/, @$need;
-
+	push @$need, 'A';
+	
 	# make sure we only test formats that are supported.
 	if ( $formatOverride ) {
 		@supportedformats = ($formatOverride);
@@ -514,8 +515,9 @@ sub getConvertCommand2 {
 #}
 
 sub tokenizeConvertCommand2 {
-	my ($transcoder, $filepath, $fullpath, $noPipe, $quality) = @_;
 
+	my ($transcoder, $filepath, $fullpath, $noPipe, $quality, $volume) = @_;
+	
 	# Bug 10199 - make sure we do not promote any strings to decoded ones (8859-1 => UFT-8)
 	use bytes;
 
@@ -624,6 +626,8 @@ sub tokenizeConvertCommand2 {
 		elsif ($v eq 'g') {$value = $transcoder->{'groupid'};}
 		elsif ($v eq 'G') {$value = $subs{'GROUPID'};}
 
+		elsif ($v eq 'a') {$value = $volume}
+		
 		foreach (values %subs) {
 			s/%$v/$value/ge;
 		}
