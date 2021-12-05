@@ -213,15 +213,15 @@ wmap wmap * *
 
 flc flc * *
 	# A:{GAIN=gain %a}IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
-	[flac] -dcs $START$ $END$ -- $FILE$ | [sox] -q -t wav - -b 24 -t flac - | [sox] -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
+	[flac] -dcs $START$ $END$ -- $FILE$ | [sox] --no-dither -q -t wav - -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
 
 flc flc fab4 *
 	# IA:{GAIN=gain %a}D:{RESAMPLE=-r %d}
-	[sox] -q -t flac - -b 24 -t flac - | [sox] -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
+	[sox] --no-dither -q -t flac - -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
 
 mp3 flc * *
 	# A:{GAIN=gain %a}IFT:{START=--skip=%t}U:{END=--until=%v}
-	[sox] -q -t mp3 $FILE$ -b 24 -t flac - | [sox] -q -t flac - -t flac -C 0 - $GAIN$ dither
+	[sox] --no-dither -q -t mp3 $FILE$ -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 - $GAIN$ dither
 
 aif flc * *
 	# IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
@@ -229,11 +229,11 @@ aif flc * *
 
 wav flc * *
 	# A:{GAIN=gain %a}IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
-	[sox] -q -t wav $FILE$ -b 24 -t flac - | [sox] -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
+	[sox] --no-dither -q -t wav $FILE$ -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
 
 ogg flc * * 
 	# A:{GAIN=gain %a}IFRD:{RESAMPLE=-r %d}
-	[sox] -q -t ogg $FILE$ -b 24 -t flac - | [sox] -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
+	[sox] --no-dither -q -t ogg $FILE$ -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
 
 wma flc * *
 	# F:{PATH=%f}R:{PATH=%F}
