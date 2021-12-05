@@ -263,11 +263,11 @@ wmap wmap * *
 # FLAC output starts here 
 flc flc * *
 	# A:{GAIN=%a}IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
-        [flac] -dcs $START$ $END$ -- $FILE$ | [tee] /tmp/lms-track | [sox] --no-dither -q -t wav - -b 24 -t flac - | ( sleep 0.5; rate=$( [soxi] -r /tmp/lms-track ); bandwidth=89; if test $rate -eq 48000; then bandwidth=85; fi; if test $rate -gt 48000; then bandwidth=74; fi; V=$( echo 100 - $GAIN$ \* -2 / 1 | bc ); cmd="[sox] --no-dither -q -t flac - -t flac -C 0 - vol 0.5amplitude rate -p 25 -v -b $bandwidth 110600 gain $( echo $GAIN$ + 6.0206 | bc ) dither"; echo $cmd >> /tmp/lms-convert-log; $cmd )
+        [flac] -dcs $START$ $END$ -- $FILE$ | [tee] /tmp/lms-track | [sox] --no-dither -q -t wav - -b 24 -t flac - | ( sleep 0.5; rate=$( [soxi] -r /tmp/lms-track ); bandwidth=89; if test $rate -eq 48000; then bandwidth=84; fi; if test $rate -gt 48000; then bandwidth=74; fi; V=$( echo 100 - $GAIN$ \* -2 / 1 | bc ); cmd="[sox] --no-dither -q -t flac - -t flac -C 0 - vol 0.5amplitude rate -p 25 -v -b $bandwidth 110600 gain $( echo $GAIN$ + 6.0206 | bc ) dither"; echo $cmd >> /tmp/lms-convert-log; $cmd )
 
 flc flc fab4 *
 	# IA:{GAIN=%a}D:{RESAMPLE=-r %d}
-	[tee] /tmp/lms-track | [sox] --no-dither -q -t flac - -b 24 -t flac - | ( sleep 0.5; rate=$( [soxi] -r /tmp/lms-track ); bandwidth=89; if test $rate -eq 48000; then bandwidth=85; fi; if test $rate -gt 48000; then bandwidth=74; fi; V=$( echo 100 - $GAIN$ \* -2 / 1 | bc ); cmd="[sox] --no-dither -q -t flac - -t flac -C 0 - vol 0.5amplitude rate -p 25 -v -b $bandwidth 110600 gain $( echo $GAIN$ + 6.0206 | bc ) dither"; echo $cmd >> /tmp/lms-convert-log; $cmd )
+	[tee] /tmp/lms-track | [sox] --no-dither -q -t flac - -b 24 -t flac - | ( sleep 0.5; rate=$( [soxi] -r /tmp/lms-track ); bandwidth=89; if test $rate -eq 48000; then bandwidth=84; fi; if test $rate -gt 48000; then bandwidth=74; fi; V=$( echo 100 - $GAIN$ \* -2 / 1 | bc ); cmd="[sox] --no-dither -q -t flac - -t flac -C 0 - vol 0.5amplitude rate -p 25 -v -b $bandwidth 110600 gain $( echo $GAIN$ + 6.0206 | bc ) dither"; echo $cmd >> /tmp/lms-convert-log; $cmd )
 
 mp3 flc * *
 	# A:{GAIN=%a}IFT:{START=--skip=%t}U:{END=--until=%v}
