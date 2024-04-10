@@ -38,6 +38,9 @@ use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scanner::Local;
 
+use Slim::Player::Client;
+
+
 my $log = logger('control.command');
 
 my $prefs = preferences('server');
@@ -656,6 +659,8 @@ sub mixerCommand {
 		}
 	}
 
+	Slim::Player::Source::gototime($client, "-0");
+		
 	if (defined $controllerSequenceId) {
 		$client->controllerSequenceId(undef);
 		$client->controllerSequenceNumber(undef);

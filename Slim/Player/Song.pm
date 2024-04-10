@@ -568,12 +568,13 @@ sub open {
 				# Need to transcode
 
 				my $quality = $prefs->client($client)->get('lameQuality');
-
+				my $volume = $prefs->client($client)->get('volume');
+				
 				# use a pipeline on windows when remote as we need socketwrapper to ensure we get non blocking IO
 				my $usepipe = (defined $sock || (main::ISWINDOWS && $handler->isRemote)) ? 1 : undef;
 
 				my $command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
-					$transcoder, $sock ? '-' : $track->path, $self->streamUrl(), $usepipe, $quality
+					$transcoder, $sock ? '-' : $track->path, $self->streamUrl(), $usepipe, $quality, ($volume / 2) - 50
 				);
 
 				if (!defined($command)) {

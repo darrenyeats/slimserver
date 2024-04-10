@@ -53,8 +53,8 @@
 # default is "IF"
 #
 # Substitution strings for variable capabilities
-# %f, $FILE$ - file path (local files)
-# %F, $URL$  - full URL (remote streams)
+# %f - file path (local files)
+# %F - full URL (remote streams)
 #
 # %o - stream start byte offset
 # 
@@ -71,83 +71,63 @@
 # %d - samplerate: samples/s
 # %D - samplerate: ksamples/s
 
-# %C, $CHANNELS$   - channel count
-# %c, $OCHANNELS$  - output channel count
-# %i               - clientid
-# %I, $CLIENTID$   - clientid     ( : or . replaced by - )
-# %p               - player model
-# %P, $PLAYER$     - player model ( SPACE or QOUTE replaced by _ )
-# %n               - player name
-# %N, $NAME$       - player name  ( SPACE or QOUTE replaced by _ )
-# %q, $QUALITY$    - quality
-# %Q,              - quality ( fractal notation: if = '0' return '01' )
-#     ${FILENAME}$ - contents of {FILENAME} (may contain other $*$ substitutions )
-
 # specific combinations match before wildcards
 
 mp4 mp3 * *
-	# FB:{BITRATE=--abr %B}T:{START=-j %s}U:{END=-e %u}
-	[faad] -q -w -f 1 $START$ $END$ $FILE$ | [lame] --silent -q $QUALITY$ $BITRATE$ - -
-
-mp4x mp3 * *
-	# FB:{BITRATE=--abr %B}T:{START=-j %s}U:{END=-e %u}
+	# FB:{BITRATE=-B %B}T:{START=-j %s}U:{END=-e %u}
 	[faad] -q -w -f 1 $START$ $END$ $FILE$ | [lame] --silent -q $QUALITY$ $BITRATE$ - -
 
 aac mp3 * *
-	# IFB:{BITRATE=--abr %B}
+	# IFB:{BITRATE=-B %B}
 	[faad] -q -w -f 1 $FILE$ | [lame] --silent -q $QUALITY$ $BITRATE$ - -
 
 sls mp3 * *
-	# FB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
+	# FB:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
 	[sls] $FILE$ - -s | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
 
 alc mp3 * *
-	# FB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}T:{START=-j %s}U:{END=-e %u}
-	[faad] -q -w -f 1 $START$ $END$ $FILE$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
-
-alcx mp3 * *
-	# FB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}T:{START=-j %s}U:{END=-e %u}
-	[faad] -q -w -f 1 $START$ $END$ $FILE$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
+	# FB:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}T:{START=-j %s}U:{END=-e %u}
+	[faad] -q -w -f 1 $START$ $END$ $FILE$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ - -
 
 ogg mp3 * *
-	# IFB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[sox] -q -t ogg $FILE$ -t wav - | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
+	# IFB:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
+	[sox] -q -t ogg $FILE$ -t wav - | [lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ - -
 
 wav mp3 * *
-	# IFB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ $FILE$ -
+	# IFB:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
+	[lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ $FILE$ -
 
 aif mp3 * *
-	# IFB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ $FILE$ -
+	# IFB:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
+	[lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ $FILE$ -
 
 flc mp3 * *
-	# FB:{BITRATE=--abr %B}T:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=--resample %D}
-	[flac] -dcs $START$ $END$ -- $FILE$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
+	# FB:{BITRATE=-B %B}T:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=--resample %D}
+	[flac] -dcs $START$ $END$ -- $FILE$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ - -
 
 wma mp3 * *
-	# F:{PATH=%f}R:{PATH=%F}B:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[wmadec] -w $PATH$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
+	# F:{PATH=%f}R:{PATH=%F}B:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
+	[wmadec] -w $PATH$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ - -
 
 wmal mp3 * *
-	# F:{PATH=%f}R:{PATH=%F}B:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[wmadec] -w $PATH$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
+	# F:{PATH=%f}R:{PATH=%F}B:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
+	[wmadec] -w $PATH$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ - -
 
 wmap mp3 * *
-	# F:{PATH=%f}R:{PATH=%F}B:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[wmadec] -w $PATH$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
+	# F:{PATH=%f}R:{PATH=%F}B:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
+	[wmadec] -w $PATH$ | [lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ - -
 
 mpc mp3 * *
-	# IRB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[mppdec] --silent --prev --gain 3 - - | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
+	# IRB:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
+	[mppdec] --silent --prev --gain 3 - - | [lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ - -
 
 ape mp3 * *
-	# FB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[mac] $FILE$ - -d | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
+	# FB:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
+	[mac] $FILE$ - -d | [lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ - -
 
 wvp mp3 * *
-	# FB:{BITRATE=--abr %B}T:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=--resample %D}
-	[wvunpack] $FILE$ -wq $START$ $END$ -o - | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
+	# FB:{BITRATE=-B %B}T:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=--resample %D}
+	[wvunpack] $FILE$ -wq $START$ $END$ -o - | [lame] --silent -q $QUALITY$ $RESAMPLE$ -v $BITRATE$ - -
 
 mp3 mp3 * *
 	-
@@ -167,12 +147,6 @@ flc aif * *
 	# IFT:{START=--skip=%t}U:{END=--until=%v}
 	[flac] -dcs --force-raw-format --endian=big --sign=signed $START$ $END$ -- $FILE$
 
-ogf ogf * *
-	-
-
-ogf flc * *
-	[flac] --ogg -dcs -- $FILE$ | [flac] -cs --ignore-chunk-sizes --totally-silent --compression-level-0 - 
-
 ogg ogg * *
 	-
 
@@ -181,23 +155,6 @@ ogg aif * *
 
 ogg pcm * *
 	[sox] -q -t ogg $FILE$ -t raw -r 44100 -c 2 -2 -s -
-	
-ops ops * *
-	-
-
-ops mp3 * *
-	# IFB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[sox] -q -t opus $FILE$ -t wav - | [lame] --silent -q $QUALITY$ $RESAMPLE$ $BITRATE$ - -
-
-ops aif * *
-	[sox] -q -t opus $FILE$ -t raw -r 44100 -c 2 -2 -s $-x$ -
-
-ops pcm * *
-	[sox] -q -t opus $FILE$ -t raw -r 44100 -c 2 -2 -s -
-
-ops flc * *
-	# IFRD:{RESAMPLE=-r %d}T:{START=trim %s}
-	[sox] -t opus $FILE$ -t flac -C 0 $RESAMPLE$ - $START$
 
 wma pcm * *
 	# F:{PATH=%f}R:{PATH=%F}
@@ -226,20 +183,12 @@ mpc aif * *
 alc pcm * *
 	# IFT:{START=-j %s}U:{END=-e %u}
 	[faad] -q -w -f 2 $START$ $END$ $FILE$
-	
-alcx pcm * *
-	# IFT:{START=-j %s}U:{END=-e %u}
-	[faad] -q -w -f 2 $START$ $END$ $FILE$
 
 wvp pcm * *
 	# IFT:{START=--skip=%t}U:{END=--until=%v}
 	[wvunpack] $FILE$ -rq $START$ $END$ -o -
 
 mp4 pcm * *
-	# IFT:{START=-j %s}U:{END=-e %u}
-	[faad] -q -w -f 2 -b 1 $START$ $END$ $FILE$
-
-mp4x pcm * *
 	# IFT:{START=-j %s}U:{END=-e %u}
 	[faad] -q -w -f 2 -b 1 $START$ $END$ $FILE$
 
@@ -261,29 +210,30 @@ wmap wmap * *
 	-
 
 # FLAC output starts here 
+
 flc flc * *
-	# A:{GAIN=%a}IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
-        [flac] -dcs $START$ $END$ -- $FILE$ | [tee] /tmp/lms-track | [sox] --no-dither -q -t wav - -b 24 -t flac - | ( sleep 0.5; rate=$( [soxi] -r /tmp/lms-track ); bandwidth=89; if test $rate -eq 48000; then bandwidth=83.5; fi; if test $rate -gt 48000; then bandwidth=74; fi; V=$( echo 100 - $GAIN$ \* -2 / 1 | bc ); cmd="[sox] --no-dither -q -t flac - -t flac -C 0 - vol 0.5amplitude rate -p 25 -v -b $bandwidth 110600 gain $( echo $GAIN$ + 6.0206 | bc ) dither"; echo $cmd >> /tmp/lms-convert-log; $cmd )
+	# A:{GAIN=gain %a}IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
+	[flac] -dcs $START$ $END$ -- $FILE$ | [sox] --no-dither -q -t wav - -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
 
 flc flc fab4 *
-	# IA:{GAIN=%a}D:{RESAMPLE=-r %d}
-	[tee] /tmp/lms-track | [sox] --no-dither -q -t flac - -b 24 -t flac - | ( sleep 0.5; rate=$( [soxi] -r /tmp/lms-track ); bandwidth=89; if test $rate -eq 48000; then bandwidth=83.5; fi; if test $rate -gt 48000; then bandwidth=74; fi; V=$( echo 100 - $GAIN$ \* -2 / 1 | bc ); cmd="[sox] --no-dither -q -t flac - -t flac -C 0 - vol 0.5amplitude rate -p 25 -v -b $bandwidth 110600 gain $( echo $GAIN$ + 6.0206 | bc ) dither"; echo $cmd >> /tmp/lms-convert-log; $cmd )
+	# IA:{GAIN=gain %a}D:{RESAMPLE=-r %d}
+	[sox] --no-dither -q -t flac - -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
 
 mp3 flc * *
-	# A:{GAIN=%a}IFT:{START=--skip=%t}U:{END=--until=%v}
-	[sox] --no-dither -q -t mp3 $FILE$ -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 - vol 0.5amplitude rate -p 25 -v -b 90 110600 gain $( echo $GAIN$ + 6.0206 | bc -l ) dither )
+	# A:{GAIN=gain %a}IFT:{START=--skip=%t}U:{END=--until=%v}
+	[sox] --no-dither -q -t mp3 $FILE$ -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 - $GAIN$ dither
 
 aif flc * *
-	# A:{GAIN=%a}IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
-	[flac] -cs --totally-silent --compression-level-0 $START$ $END$ -- $FILE$ | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - vol 0.5amplitude rate -p 25 -v -b 90 110600 gain $( echo $GAIN$ + 6.0206 | bc -l ) dither )
+	# IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
+	[flac] -cs --totally-silent --compression-level-0 $START$ $END$ -- $FILE$ | [sox] -q -t flac - -t flac -C 0 $RESAMPLE$ -	
 
 wav flc * *
 	# A:{GAIN=gain %a}IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
-	[sox] --no-dither -q -t wav $FILE$ -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - vol 0.5amplitude rate -p 25 -v -b 90 110600 gain $( echo $GAIN$ + 6.0206 | bc -l ) dither )
+	[sox] --no-dither -q -t wav $FILE$ -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
 
 ogg flc * * 
 	# A:{GAIN=gain %a}IFRD:{RESAMPLE=-r %d}
-	[sox] --no-dither -q -t ogg $FILE$ -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - vol 0.5amplitude rate -p 25 -v -b 90 110600 gain $( echo $GAIN$ + 6.0206 | bc -l ) dither )
+	[sox] --no-dither -q -t ogg $FILE$ -b 24 -t flac - | [sox] --no-dither -q -t flac - -t flac -C 0 $RESAMPLE$ - $GAIN$ dither
 
 wma flc * *
 	# F:{PATH=%f}R:{PATH=%F}
@@ -309,10 +259,6 @@ mp4 flc * *
 	# IFT:{START=-j %s}U:{END=-e %u}
 	[faad] -q -w -f 1 $START$ $END$ $FILE$ | [flac] -cs --totally-silent --compression-level-0 --ignore-chunk-sizes -
 
-mp4x flc * *
-	# IFT:{START=-j %s}U:{END=-e %u}
-	[faad] -q -w -f 1 $START$ $END$ $FILE$ | [flac] -cs --totally-silent --compression-level-0 --ignore-chunk-sizes -
-
 aac flc * *
 	# IF
 	[faad] -q -w -f 1 $FILE$ | [flac] -cs --totally-silent --compression-level-0 --ignore-chunk-sizes -
@@ -324,11 +270,6 @@ sls flc * *
 alc flc * *
 	# IFT:{START=-j %s}U:{END=-e %u}D:{RESAMPLE=-r %d}
 	[faad] -q -w -f 1 $START$ $END$ $FILE$ | [sox] -q -t wav - -t flac -C 0 $RESAMPLE$ -
-
-alcx flc * *
-	# IFT:{START=-j %s}U:{END=-e %u}D:{RESAMPLE=-r %d}
-	[faad] -q -w -f 1 $START$ $END$ $FILE$ | [sox] -q -t wav - -t flac -C 0 $RESAMPLE$ -
-
 
 wvp flc * *
 	# IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
@@ -350,12 +291,12 @@ alc alc * *
 
 # special case for smart bitrates on mp3 input
 mp3 mp3 transcode *
-	# IFB:{BITRATE=--abr %B}D:{RESAMPLE=--resample %D}
-	[lame] --silent -q $QUALITY$ $BITRATE$ $RESAMPLE$ --mp3input $FILE$ -
+	# IFB:{BITRATE=-B %B}D:{RESAMPLE=--resample %D}
+	[lame] --silent -q $QUALITY$ -v $BITRATE$ $RESAMPLE$ --mp3input $FILE$ -
 
-#flc flc transcode *
+flc flc transcode *
 	# IFT:{START=--skip=%t}U:{END=--until=%v}D:{RESAMPLE=-r %d}
-#	[flac] -dcs $START$ $END$ -- $FILE$ | [sox] --no-dither -q -t wav - -t flac -C 0 $RESAMPLE$ - 
+	[flac] -dcs $START$ $END$ -- $FILE$ | [sox] -q -t wav - -t flac -C 0 $RESAMPLE$ - 
 
 # This example transcodes MP3s to MP3s, if the target machine has the 
 # given MAC address. This rule will take precedence over the
@@ -365,11 +306,3 @@ mp3 mp3 transcode *
 
 spdr spdr * *
 	 -
-
-dsf dsf * *
-	# IFD
-	-
-
-dff dff * *
-	# IFD
-	-

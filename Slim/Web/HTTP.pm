@@ -1319,7 +1319,7 @@ sub generateHTTPResponse {
 			}
 
 			if ( $path =~ /music/ ) {
-				if ( downloadMusicFile($httpClient, $response, $id) ) {
+				if ( downloadMusicFile($httpClient, $response, $id, $client) ) {
 					return 0;
 				}
 			}
@@ -2724,8 +2724,11 @@ sub protect { if ( main::WEBUI ) {
 } }
 
 sub downloadMusicFile {
-	my ($httpClient, $response, $id) = @_;
 
+	my ($httpClient, $response, $id, $client) = @_;
+
+	my $volume = $prefs->client($client)->get('volume');
+	
 	# Support transferMode.dlna.org (DLNA 7.4.49)
 	my $tm = $response->request->header('transferMode.dlna.org') || 'Streaming';
 	if ( $tm =~ /^(?:Streaming|Background)$/i ) {
@@ -2783,7 +2786,7 @@ sub downloadMusicFile {
 					}
 
 					my $command = Slim::Player::TranscodingHelper::tokenizeConvertCommand2(
-						$transcoder, $obj->path, $obj->url, undef, $quality
+						$transcoder, $obj->path, $obj->url, undef, $quality, ($volume / 2) - 50
 					);
 
 					if ( !$command ) {
